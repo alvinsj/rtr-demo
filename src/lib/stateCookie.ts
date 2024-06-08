@@ -1,5 +1,5 @@
 
-import { saveCookie, getCookie } from './cookie'
+import { saveCookie, getCookie, deleteCookie } from './cookie'
 
 export const createStateCookie = (value: string) => {
   if (!value) throw new Error('state value is required')
@@ -12,4 +12,8 @@ export const createStateCookie = (value: string) => {
 
 export const getStateCookie = (state: string) => {
   return getCookie(`app.txs.${state}`)
+}
+
+export const deleteStateCookie = (state: string) => {
+  deleteCookie(`app.txs.${state}`)
 }
