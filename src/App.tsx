@@ -1,33 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+
+import { getPKCEState } from '@/utils/auth'
+import LoginButton from '@/components/LoginButton'
+import { clearAllCookies } from './lib/cookie'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isAuthReady, setIsAuthReady] = useState(false)
+  const [status, setStatus] = useState('')
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const state = params.get('state')
+    const code = params.get('code')
+
+    const { isReady: isAuthReady, codeVerifier } =
+      getPKCEState(state ?? undefined, code ?? undefined)
+
+    setIsAuthReady(isAuthReady)
+    if (!isAuthReady) return () => clearAllCookies()
+    else setStatus(`code: ${code}, codeVerifier: ${codeVerifier}`)
+
+    return () => clearAllCookies()
+  }, [])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {isAuthReady && <p>Ready for Auth Request</p>}
+      {status && <p>{status}</p>}
+      <LoginButton />
     </>
   )
 }
