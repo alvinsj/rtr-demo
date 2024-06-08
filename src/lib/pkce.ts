@@ -1,18 +1,16 @@
-import { Sha256 } from '@aws-crypto/sha256-js'
+export const toSha256 = async (text: string): Promise<number[]> => {
+  if (!text) throw new Error('data is required')
 
-export const toSha256 = async (data: string): Promise<Uint8Array> => {
-  if (!data) throw new Error('data is required')
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
 
-  const hash = new Sha256()
-  hash.update(data)
-
-  const hashed = await hash.digest()
-  return hashed
+  return Array.from(new Uint8Array(hashBuffer))
 }
 
 // refer to base64url-encoding in RFC 7636
 // https://datatracker.ietf.org/doc/html/rfc7636#appendix-A
-export const toBase64Url = (bytes: Uint8Array) => {
+export const toBase64Url = (bytes: number[]) => {
   if (bytes.length === 0) throw new Error('bytes must not be empty')
 
   const charCodes = Array.from(bytes)
@@ -38,7 +36,7 @@ export const createRandomString = (length: number = 34): string => {
 }
 
 export const createPKCECodeChallenge = async (codeVerifier: string): string => {
-  const hashed: Uint8Array = await toSha256(codeVerifier)
+  const hashed = await toSha256(codeVerifier)
   const codeChallenge = toBase64Url(hashed)
   return codeChallenge
 }
