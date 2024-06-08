@@ -6,16 +6,19 @@ describe("setStateCookie", () => {
     expect(() => setStateCookie(""))
       .toThrow("state value is required")
   })
+
   test("sets cookie with prefix app.txs", () => {
     const state = setStateCookie("code_verifier_secret")
     expect(document.cookie)
       .toMatch(`app.txs.${state}=code_verifier_secret`)
   })
+
   test("sets cookie with latest value", () => {
     const state = setStateCookie("code_verifier_secret")
     expect(document.cookie)
       .toMatch(`app.txs.${state}=code_verifier_secret`)
   })
+
   test("returns state", () => {
     const state = setStateCookie("code_verifier_secret")
     expect(state).toMatch(/[\w-]+/)
