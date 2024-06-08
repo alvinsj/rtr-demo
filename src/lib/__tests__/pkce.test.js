@@ -3,7 +3,7 @@ import {
   toSha256,
   toBase64Url,
   createRandomString,
-  createPKCECodeVerifier,
+  createPKCECodeChallenge,
 } from '../pkce'
 
 describe('createRandomString', () => {
@@ -52,18 +52,18 @@ describe('toBase64Url', () => {
   })
 })
 
-describe('createPKCECodeVerifier', () => {
+describe('createPKCECodeChallenge', () => {
   test('creates code challenge', async () => {
     const codeVerifier = createRandomString(43)
-    const codeChallenge = await createPKCECodeVerifier(codeVerifier)
+    const codeChallenge = await createPKCECodeChallenge(codeVerifier)
 
     expect(codeChallenge).toHaveLength(43)
   })
 
   test('creates unique code challenge', async () => {
     const codeVerifier = createRandomString(43)
-    const codeChallenge1 = await createPKCECodeVerifier(codeVerifier)
-    const codeChallenge2 = await createPKCECodeVerifier(codeVerifier)
+    const codeChallenge1 = await createPKCECodeChallenge(codeVerifier)
+    const codeChallenge2 = await createPKCECodeChallenge(codeVerifier)
 
     expect(codeChallenge1).toEqual(codeChallenge2)
   })
