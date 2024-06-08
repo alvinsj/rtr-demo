@@ -6,6 +6,11 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'happy-dom'
+    environment: 'happy-dom',
+    browser: {
+      enabled: true,
+      name: 'chrome',
+      headless: true
+    }
   }
 })
