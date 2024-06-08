@@ -14,6 +14,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'max-len': ['error', { code: 100 }]
+    'max-len': ['error', { code: 100 }],
+    'no-console': 'error',
+    'semi': ['error', 'never']
   },
 }
