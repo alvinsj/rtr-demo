@@ -66,3 +66,25 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+pre {
+  max-width: 50vw;
+  text-align: left;
+  overflow: hidden;
+  white-space: wrap;
+  word-wrap: normal;
+  font-size: 0.9em;
+  line-height: 1.5;
+  border-radius: 8px;
+  padding: 1em;
+}
+
+.error {
+  color: red;
+}
