@@ -1,26 +1,26 @@
 import { describe, test, expect } from "vitest"
-import { getStateCookie, setStateCookie } from "../stateCookie"
+import { getStateCookie, createStateCookie } from "../stateCookie"
 
-describe("setStateCookie", () => {
+describe("createStateCookie", () => {
   test("throws errors on empty string", () => {
-    expect(() => setStateCookie(""))
+    expect(() => createStateCookie(""))
       .toThrow("state value is required")
   })
 
   test("sets cookie with prefix app.txs", () => {
-    const state = setStateCookie("code_verifier_secret")
+    const state = createStateCookie("code_verifier_secret")
     expect(document.cookie)
       .toMatch(`app.txs.${state}=code_verifier_secret`)
   })
 
   test("sets cookie with latest value", () => {
-    const state = setStateCookie("code_verifier_secret")
+    const state = createStateCookie("code_verifier_secret")
     expect(document.cookie)
       .toMatch(`app.txs.${state}=code_verifier_secret`)
   })
 
   test("returns state", () => {
-    const state = setStateCookie("code_verifier_secret")
+    const state = createStateCookie("code_verifier_secret")
     expect(state).toMatch(/[\w-]+/)
   })
 })
