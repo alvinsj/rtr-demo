@@ -1,6 +1,3 @@
-import { saveCookie } from './cookie'
-import { setStateCookie } from './stateCookie'
-
 export const toSha256 = async (text: string): Promise<number[]> => {
   if (!text) throw new Error('data is required')
 
