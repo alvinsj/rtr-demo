@@ -45,6 +45,11 @@ describe('toSha256', () => {
 })
 
 describe('toBase64Url', () => {
+  test('throws error on empty array', () => {
+    expect(() => toBase64Url([]))
+      .toThrow('bytes must not be empty')
+  });
+
   test('converts to base64url', () => {
     const base64url = toBase64Url([1, 2, 3, 4, 5])
 
