@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest"
+import { describe, test, expect, vi } from "vitest"
 import { renderHook } from "@testing-library/react"
 
 import useAuthContextValue from "@/hooks/useAuthContextValue"
@@ -14,14 +14,16 @@ describe("useAuthContextValue", () => {
     })
   })
 
-  test("updates access token and refresh token", () => {
+  test("updates access token and refresh token", async () => {
     const { result } = renderHook(() => useAuthContextValue({
       accessToken: "accessToken",
       refreshToken: "refreshToken"
     }))
 
-    expect(result.current.accessToken).toBe("accessToken")
-    expect(result.current.refreshToken).toBe("refreshToken")
+    vi.waitFor(() => {
+      expect(result.current.accessToken).toBe("accessToken")
+      expect(result.current.refreshToken).toBe("refreshToken")
+    })
   })
 })
 
