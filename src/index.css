@@ -68,13 +68,12 @@ button:focus-visible {
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  height: 100vh;
+  padding: 15px;
 }
 
 pre {
-  max-width: 50vw;
+  max-width: 80vw;
   text-align: left;
   overflow: hidden;
   white-space: wrap;
@@ -82,7 +81,6 @@ pre {
   font-size: 0.9em;
   line-height: 1.5;
   border-radius: 8px;
-  padding: 1em;
 }
 
 .error {
@@ -90,7 +88,7 @@ pre {
 }
 
 .debug-longText {
-  max-width: 300px;
+  max-width: 80vw;
   overflow: hidden;
   word-break: break-all;
   margin-bottom: 10px;
@@ -99,4 +97,5 @@ pre {
 .debug-itemName {
   font-weight: bold;
   vertical-align: baseline;
+  padding-right: 15px;
 }
