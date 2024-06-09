@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react'
-import { getPKCECodes, redirectAuthRequestE } from '@/utils/auth'
+import { createPKCECodes, redirectToLogin } from '@/utils/auth'
 
 const LoginButton = () => {
   const [error, setError] = useState('')
 
   const handleLogin = useCallback(async () => {
     try {
-      const codes = await getPKCECodes()
-      redirectAuthRequestE(codes.state, codes.codeChallenge)
+      const codes = await createPKCECodes()
+      redirectToLogin(codes.state, codes.codeChallenge)
     } catch (error) {
       if (error instanceof Error)
         setError(error.message)

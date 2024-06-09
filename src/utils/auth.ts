@@ -2,31 +2,23 @@ import {
   deleteStateCookie,
   getStateCookie,
   createStateCookie
-} from "@/lib/stateCookie"
+} from "@/utils/stateCookie"
 import {
   createPKCECodeChallenge,
   createRandomString
-} from "@/lib/pkce"
+} from "@lib/pkce"
 import { PKCEState } from "@/types"
 import config from "@/config"
 
-export const getPKCEState = (state?: string, code?: string): PKCEState => {
-  // guard: pkce is not initialized yet
-  if (!state || !code) {
-    return { isReady: false }
-  }
+export const createPKCECodes = async () => {
+  const codeVerifier = createRandomString()
+  const codeChallenge = await createPKCECodeChallenge(codeVerifier)
+  const state = createStateCookie(codeVerifier)
 
-  const codeVerifier = getStateCookie(state)
-  if (!codeVerifier) return { isReady: false }
-
-  return {
-    isReady: true,
-    codeVerifier,
-    code
-  }
+  return { codeVerifier, codeChallenge, state }
 }
 
-export const redirectAuthRequestE = async (
+export const redirectToLogin = async (
   state: string, codeChallenge: string
 ) => {
   const query = new URLSearchParams()
@@ -38,39 +30,17 @@ export const redirectAuthRequestE = async (
   window.location.replace(`${config.LOGIN_URL}?${query.toString()}`)
 }
 
-export const postForTokens = async (code: string, codeVerifier: string) => {
-  const body = JSON.stringify({
-    code,
-    code_verifier: codeVerifier,
-    grant_type: 'authorization_code'
-  })
-  const request = new Request(config.TOKEN_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body
-  })
-
-  try {
-    const response = await fetch(request)
-    const res = await response.json()
-
-    if (!response.ok) {
-      throw new Error(res.error)
-    }
-    // FIXME for more error handling of different response
-    return res
-
-  } catch (error) {
-    if (error instanceof Error)
-      throw new Error(error?.message)
-    else throw new Error('An unknown error occurred')
+export const getPKCEStatus = (state?: string): PKCEState => {
+  // guard: pkce is not initialized yet
+  if (!state) {
+    return { isDone: false }
   }
-}
 
-export const getPKCECodes = async () => {
-  const codeVerifier = createRandomString()
-  const codeChallenge = await createPKCECodeChallenge(codeVerifier)
-  const state = createStateCookie(codeVerifier)
+  const codeVerifier = getStateCookie(state)
+  if (!codeVerifier) return { isDone: false }
 
-  return { codeVerifier, codeChallenge, state }
+  return {
+    isDone: true,
+    codeVerifier,
+  }
 }

@@ -1,5 +1,5 @@
 export type PKCEState = {
-  isReady: boolean,
+  isDone: boolean,
   codeVerifier?: string,
   code?: string
 }
