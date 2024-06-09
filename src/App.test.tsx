@@ -12,5 +12,5 @@ test('renders text', () => {
   expect(wrapper).toBeTruthy()
 
   const { getByText } = wrapper
-  expect(getByText('Vite + React')).toBeTruthy()
+  expect(getByText('Login')).toBeTruthy()
 })
