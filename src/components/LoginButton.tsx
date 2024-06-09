@@ -1,20 +1,20 @@
 import useInitPKCE from '@/hooks/useInitPKCE'
 
-const LoginButton = () => {
+type LoginButtonProps = {
+  className?: string
+}
+const LoginButton = ({ className }: LoginButtonProps) => {
   const { error, onLogin } = useInitPKCE()
 
   return (
-    <>
-      <button type="submit" onClick={onLogin}>
-        Login
-      </button>
-      <pre>
-        {error}
-      </pre>
-      <pre>
-        {document.cookie}
-      </pre>
-    </>
+    <div className={className}>
+      <span>{error}</span>
+      <span>
+        <button type="submit" onClick={onLogin}>
+          Login
+        </button>
+      </span>
+    </div>
   )
 }
 

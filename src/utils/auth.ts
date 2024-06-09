@@ -6,7 +6,7 @@ import {
   createPKCECodeChallenge,
   createRandomString
 } from "@lib/pkce"
-import { PKCEState } from "@/types"
+import { PKCEStatus } from "@/types"
 import config from "@/config"
 
 export const createPKCECodes = async () => {
@@ -29,7 +29,7 @@ export const redirectToLogin = async (
   window.location.replace(`${config.LOGIN_URL}?${query.toString()}`)
 }
 
-export const getPKCEStatus = (state?: string): PKCEState => {
+export const getPKCEStatus = (state?: string | null): PKCEStatus => {
   // guard: pkce is not initialized yet
   if (!state) {
     return { isDone: false }
