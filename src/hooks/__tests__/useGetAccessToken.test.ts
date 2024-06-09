@@ -1,27 +1,36 @@
 import { describe, test, expect, vi } from "vitest"
-import { renderHook } from "@testing-library/react"
-import useGetAccessTokenEffect from "@/hooks/useGetAccessTokenEffect"
+import { act, renderHook } from "@testing-library/react"
+import useGetAccessToken from "@/hooks/useGetAccessToken"
 
-describe("useGetAccessTokenEffect", () => {
+describe("useGetAccessToken", () => {
   test("returns null state", () => {
-    const { result } = renderHook(() => useGetAccessTokenEffect(null, null, undefined))
+    const { result } = renderHook(() => useGetAccessToken())
     expect(result.current).toEqual({
+      getATWithAuthCode: expect.any(Function),
+      getATWithRefreshToken: expect.any(Function),
       isLoading: false,
       error: null,
-      tokens: null
+      tokens: {
+        accessToken: null,
+        refreshToken: null,
+      }
     })
   })
 
   test("returns access tokens", async () => {
     vi.mock("@/apis/token", async () => ({
-      postTokens: vi.fn(() => Promise.resolve({
+      postToken: vi.fn(() => Promise.resolve({
         refresh_token: "refresh_token_jwt", access_token: "access_token_jwt"
       }))
     }))
 
     const { result } = renderHook(
-      () => useGetAccessTokenEffect("state", "code", "codeVerifier")
+      () => useGetAccessToken()
     )
+
+    act(() => {
+      result.current.getATWithAuthCode("code", "codeVerifier")
+    })
 
     expect(result.current.isLoading).toBeTruthy()
     expect(result.current.error).toBeFalsy()
@@ -34,18 +43,31 @@ describe("useGetAccessTokenEffect", () => {
       expect(result.current.isLoading).toBeFalsy()
       expect(result.current.error).toBeFalsy()
     })
+
+    vi.unmock("@/apis/token")
   })
 
   test("captures error", async () => {
     vi.mock("@/apis/token", async () => ({
-      postTokens: vi.fn(() => Promise.reject(new Error("error")))
+      postToken: vi.fn(() => Promise.reject(new Error("error")))
     }))
 
     const { result } = renderHook(() =>
-      useGetAccessTokenEffect("state", "code", "codeVerifier"))
+      useGetAccessToken()
+    )
+
+    act(() => {
+      result.current.getATWithAuthCode("code", "codeVerifier")
+    })
 
     expect(result.current.isLoading).toBeTruthy()
     expect(result.current.error).toBeNull()
-    await vi.waitFor(() => expect(result.current.error).toBe("error"))
+
+    vi.waitFor(() => {
+      expect(result.current.tokens).toBeNull()
+      expect(result.current.isLoading).toBeFalsy()
+      expect(result.current.error).toBe("error")
+    })
+    vi.unmock("@/apis/token")
   })
 })

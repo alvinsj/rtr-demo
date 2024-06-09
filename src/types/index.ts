@@ -15,3 +15,5 @@ export const PostTokenSchema = z.object({
   expires_at: z.number(),
   refresh_token: z.string(),
 })
+
+export type PostTokenResponse = z.infer<typeof PostTokenSchema>

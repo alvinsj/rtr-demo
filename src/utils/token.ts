@@ -7,3 +7,7 @@ export const getRefreshToken = () => {
   return localStorage.getItem('refresh_token')
 }
 
+export const deleteRefreshToken = () => {
+  localStorage.removeItem('refresh_token')
+}
+

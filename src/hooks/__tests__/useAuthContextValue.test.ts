@@ -5,7 +5,10 @@ import useAuthContextValue from "@/hooks/useAuthContextValue"
 
 describe("useAuthContextValue", () => {
   test("returns auth context", () => {
-    const { result } = renderHook(() => useAuthContextValue({}))
+    const { result } = renderHook(() => useAuthContextValue({
+      accessToken: null,
+      refreshToken: null
+    }))
     expect(result.current).toEqual({
       accessToken: null,
       refreshToken: null,
