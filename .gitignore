@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 !.env.test.local
+coverage/
 
 # Editor directories and files
 .vscode/*
