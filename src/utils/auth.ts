@@ -1,5 +1,4 @@
 import {
-  deleteStateCookie,
   getStateCookie,
   createStateCookie
 } from "@/utils/stateCookie"

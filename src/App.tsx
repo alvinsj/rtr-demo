@@ -24,6 +24,8 @@ function App() {
     }
 
     return () => clearAllCookies()
+    // on mount only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

@@ -4,7 +4,9 @@ export const saveCookie = (name: string, value: string, mins: number = 60) => {
 
   const date = new Date()
   date.setTime(date.getTime() + mins * 60 * 1000)
-  document.cookie = `${name}=${value};Expires=${date.toUTCString()};\ path=/; Secure; SameSite=Strict`
+  document.cookie =
+    `${name}=${value};Expires=${date.toUTCString()}; \
+    path=/; Secure; SameSite=Strict`
 }
 
 export const getCookie = (name: string) => {
