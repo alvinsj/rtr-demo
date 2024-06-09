@@ -1,27 +1,34 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 
 import { getPKCEStatus } from '@/utils/auth'
-import LoginButton from '@/components/LoginButton'
+import { deleteStateCookie } from '@/utils/stateCookie'
 import AuthContext from '@/contexts/AuthContext'
+
+import LoginButton from '@/components/LoginButton'
 
 import useAuthContextValue from '@/hooks/useAuthContextValue'
 import useGetAccessTokenEffect from '@/hooks/useGetAccessTokenEffect'
 
 import s from './App.module.css'
 
-
 function App() {
   const params = new URLSearchParams(window.location.search)
   const state = params.get('state')
   const code = params.get('code')
 
-
   const { codeVerifier } = getPKCEStatus(state)
-
   const { isLoading, error, tokens } = useGetAccessTokenEffect(
     state, code, codeVerifier
   )
   const authContext = useAuthContextValue(tokens)
+
+  useEffect(() => {
+    if (state && codeVerifier && tokens?.accessToken && tokens?.refreshToken) {
+      deleteStateCookie(state)
+      window.history.replaceState({}, document.title, '/')
+    }
+  }, [tokens])
+
   const status = state && code && codeVerifier ? [
     `state: ${state}`,
     `code: ${code}`,
@@ -33,7 +40,7 @@ function App() {
       <main className={s['app']}>
         <LoginButton className={s['app-loginBtn']} />
         <pre>
-          {!isLoading && tokens && <>
+          {!isLoading && <>
             <table>
               <tbody>
                 <tr>

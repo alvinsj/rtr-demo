@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 
-import { postTokens } from '@/apis/postToken'
-import { deleteStateCookie } from '@/utils/stateCookie'
+import { postTokens } from '@/apis/token'
 
 const useGetAccessTokenEffect = (
   state: string | null,
   code: string | null,
   codeVerifier: string | undefined
 ) => {
-
   const [isLoading, setIsLoading] = useState(false)
   const [tokens, setTokens] = useState<{ accessToken: string, refreshToken: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -29,8 +27,6 @@ const useGetAccessTokenEffect = (
           )
         )
         .finally(() => {
-          deleteStateCookie(state)
-          window.history.replaceState({}, document.title, '/')
           setIsLoading(false)
         })
     }
