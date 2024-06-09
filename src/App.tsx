@@ -7,27 +7,42 @@ import AuthContext from '@/contexts/AuthContext'
 import LoginButton from '@/components/LoginButton'
 
 import useAuthContextValue from '@/hooks/useAuthContextValue'
-import useGetAccessTokenEffect from '@/hooks/useGetAccessTokenEffect'
+import useGetAccessToken from '@/hooks/useGetAccessToken'
 
 import s from './App.module.css'
+import LogoutButton from './components/LogoutButton'
 
 function App() {
   const params = new URLSearchParams(window.location.search)
   const state = params.get('state')
   const code = params.get('code')
 
+
   const { codeVerifier } = getPKCEStatus(state)
-  const { isLoading, error, tokens } = useGetAccessTokenEffect(
-    state, code, codeVerifier
-  )
+
+  const {
+    isLoading, error, tokens,
+    getATWithAuthCode, getATWithRefreshToken
+  } = useGetAccessToken()
   const authContext = useAuthContextValue(tokens)
 
   useEffect(() => {
-    if (state && codeVerifier && tokens?.accessToken && tokens?.refreshToken) {
+    if (authContext.refreshToken && !authContext.accessToken) {
+      getATWithRefreshToken(authContext.refreshToken)
+    } else if (code && codeVerifier) {
+      getATWithAuthCode(code, codeVerifier)
+    }
+  }, [])
+
+  const justDoneAuthCodeRequest =
+    state && codeVerifier
+    && tokens?.accessToken && tokens?.refreshToken
+  useEffect(() => {
+    if (justDoneAuthCodeRequest) {
       deleteStateCookie(state)
       window.history.replaceState({}, document.title, '/')
     }
-  }, [tokens, codeVerifier, state])
+  }, [justDoneAuthCodeRequest])
 
   const status = state && code && codeVerifier ? [
     `state: ${state}`,
@@ -35,10 +50,15 @@ function App() {
     `codeVerifier: ${codeVerifier}`
   ] : []
 
+  const isLoggedIn = !!authContext.accessToken
+
   return (
     <AuthContext.Provider value={authContext}>
       <main className={s['app']}>
-        <LoginButton className={s['app-loginBtn']} />
+        {isLoggedIn
+          ? <LogoutButton className={s['app-loginBtn']} />
+          : <LoginButton className={s['app-loginBtn']} />
+        }
         <pre>
           {!isLoading && <>
             <table>
