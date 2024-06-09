@@ -1,23 +1,27 @@
 import { useEffect, useState } from 'react'
 
-import { getPKCEState } from '@/utils/auth'
+import { getPKCEStatus } from '@/utils/auth'
 import LoginButton from '@/components/LoginButton'
-import { clearAllCookies } from './lib/cookie'
+import { clearAllCookies } from '@lib/cookie'
 
 function App() {
+  const params = new URLSearchParams(window.location.search)
+  const state = params.get('state')
+  const code = params.get('code')
+
   const [isAuthReady, setIsAuthReady] = useState(false)
   const [status, setStatus] = useState('')
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const state = params.get('state')
-    const code = params.get('code')
+    if (state) {
+      const { isDone: isAuthReady, codeVerifier } =
+        getPKCEStatus(state)
 
-    const { isReady: isAuthReady, codeVerifier } =
-      getPKCEState(state ?? undefined, code ?? undefined)
-
-    setIsAuthReady(isAuthReady)
-    if (!isAuthReady) return () => clearAllCookies()
-    else setStatus(`code: ${code}, codeVerifier: ${codeVerifier}`)
+      if (isAuthReady) {
+        setIsAuthReady(isAuthReady)
+        setStatus(`code: ${code}, codeVerifier: ${codeVerifier}`)
+      }
+    }
 
     return () => clearAllCookies()
   }, [])
