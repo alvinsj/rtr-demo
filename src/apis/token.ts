@@ -1,14 +1,8 @@
 import config from "@/config"
-import { PostTokenSchema } from "@/types"
+import { PostTokenResponse, PostTokenSchema } from "@/types"
 
 let abortController: AbortController | undefined
-export const postTokens = async (code: string, codeVerifier: string) => {
-  const body = JSON.stringify({
-    code,
-    code_verifier: codeVerifier,
-    grant_type: 'authorization_code'
-  })
-
+export const postToken = async (body: string): Promise<PostTokenResponse> => {
   const request = new Request(config.TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -36,6 +30,23 @@ export const postTokens = async (code: string, codeVerifier: string) => {
 
     if (error instanceof Error) throw error
 
-    throw new Error('postTokens - An unknown error occurred')
+    throw new Error('postToken - An unknown error occurred')
   }
+}
+
+export const postTokenWithRefreshToken = async (refreshToken: string) => {
+  const body = JSON.stringify({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken
+  })
+  return postToken(body)
+}
+
+export const postTokenWithAuthCode = async (code: string, codeVerifier: string) => {
+  const body = JSON.stringify({
+    code,
+    code_verifier: codeVerifier,
+    grant_type: 'authorization_code'
+  })
+  return postToken(body)
 }

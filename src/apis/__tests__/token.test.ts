@@ -1,8 +1,12 @@
-import { describe, test, expect, vi } from 'vitest'
-import { postTokens } from '../token'
+import { describe, test, expect, vi, afterEach } from 'vitest'
+import { postToken, postTokenWithAuthCode, postTokenWithRefreshToken } from '../token'
 import { ZodError } from 'zod'
 
-describe('postTokens', () => {
+describe('postToken', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   test('returns access and refresh tokens', async () => {
     vi.stubGlobal('fetch', () => Promise.resolve({
       ok: true,
@@ -13,7 +17,7 @@ describe('postTokens', () => {
       })
     }))
 
-    const res = await postTokens('code', 'codeVerifier')
+    const res = await postToken('')
     expect(res).toEqual({
       access_token: 'access_token_from_server',
       refresh_token: 'refresh_token_from_server',
@@ -32,7 +36,7 @@ describe('postTokens', () => {
     }))
 
     try {
-      await postTokens('code', 'codeVerifier')
+      await postToken('')
     } catch (error) {
       const zodError = [{
         "code": "invalid_type", "expected": "string", "received": "undefined",
@@ -53,9 +57,39 @@ describe('postTokens', () => {
     }))
 
     try {
-      await postTokens('code', 'codeVerifier')
+      await postToken('')
     } catch (error) {
       expect(error).toEqual(new Error('Bad Request'))
     }
+  })
+
+  test('postTokenWithAuthCode', async () => {
+    const mockResponse = {
+      access_token: 'access_token_from_server',
+      refresh_token: 'refresh_token_from_server',
+      expires_at: 1234567890
+    }
+    vi.stubGlobal('fetch', () => Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(mockResponse)
+    }))
+    const res = await postTokenWithAuthCode("code", "code_verifier")
+
+    expect(res).toEqual(mockResponse)
+  })
+
+  test('postTokenWithRefreshToken', async () => {
+    const mockResponse = {
+      access_token: 'access_token_from_server',
+      refresh_token: 'refresh_token_from_server',
+      expires_at: 1234567890
+    }
+    vi.stubGlobal('fetch', () => Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(mockResponse)
+    }))
+    const res = await postTokenWithRefreshToken("refresh_token_jwt")
+
+    expect(res).toEqual(mockResponse)
   })
 })
