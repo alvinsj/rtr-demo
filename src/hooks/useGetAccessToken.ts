@@ -1,0 +1,63 @@
+import { useCallback, useState } from 'react'
+
+import { postTokenWithAuthCode, postTokenWithRefreshToken } from '@/apis/token'
+import { PostTokenResponse } from '@/types'
+
+const useGetAccessToken = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [tokens, setTokens] = useState<{ accessToken: string, refreshToken: string } | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const getATWithAuthCode = useCallback(async (
+    code: string,
+    codeVerifier: string
+  ) => {
+    setIsLoading(true)
+    setError(null)
+    await postTokenWithAuthCode(code, codeVerifier!)
+      .then((res: PostTokenResponse) => {
+        setTokens({
+          accessToken: res.access_token,
+          refreshToken: res.refresh_token
+        })
+      })
+      .catch((err) =>
+        setError(
+          err?.message
+          ?? 'getATWithAuthCode - An unknown error occurred'
+        )
+      )
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [])
+
+  // FIXME refactor duplicated code
+  const getATWithRefreshToken = useCallback(async (refreshToken: string) => {
+    setIsLoading(true)
+    setError(null)
+    await postTokenWithRefreshToken(refreshToken)
+      .then((res: PostTokenResponse) => {
+        setTokens({
+          accessToken: res.access_token,
+          refreshToken: res.refresh_token
+        })
+      })
+      .catch((err) =>
+        setError(
+          err?.message
+          ?? 'getATWithRefreshToken - An unknown error occurred'
+        )
+      )
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [])
+
+  return {
+    isLoading, error, tokens,
+    getATWithAuthCode, getATWithRefreshToken
+  }
+}
+
+export default useGetAccessToken
