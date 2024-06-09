@@ -1,6 +1,11 @@
 import config from "@/config"
 import { PostTokenResponse, PostTokenSchema } from "@/types"
 
+const nullTokenResponse: PostTokenResponse = {
+  access_token: '',
+  expires_at: 0,
+  refresh_token: ''
+}
 let abortController: AbortController | undefined
 export const postToken = async (body: string): Promise<PostTokenResponse> => {
   const request = new Request(config.TOKEN_URL, {
@@ -26,7 +31,7 @@ export const postToken = async (body: string): Promise<PostTokenResponse> => {
   } catch (error) {
 
     if (typeof error === 'string' && error === 'Abort the previous request')
-      return {}
+      return nullTokenResponse
 
     if (error instanceof Error) throw error
 

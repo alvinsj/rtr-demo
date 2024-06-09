@@ -1,11 +1,14 @@
 import { useCallback, useState } from 'react'
 
 import { postTokenWithAuthCode, postTokenWithRefreshToken } from '@/apis/token'
-import { PostTokenResponse } from '@/types'
+import { AuthTokens, PostTokenResponse } from '@/types'
 
 const useGetAccessToken = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const [tokens, setTokens] = useState<{ accessToken: string, refreshToken: string } | null>(null)
+  const [tokens, setTokens] = useState<AuthTokens>({
+    accessToken: null,
+    refreshToken: null
+  })
   const [error, setError] = useState<string | null>(null)
 
   const getATWithAuthCode = useCallback(async (

@@ -35,7 +35,7 @@ export const createRandomString = (length: number = 34): string => {
   return randomString
 }
 
-export const createPKCECodeChallenge = async (codeVerifier: string): string => {
+export const createPKCECodeChallenge = async (codeVerifier: string): Promise<string> => {
   const hashed = await toSha256(codeVerifier)
   const codeChallenge = toBase64Url(hashed)
   return codeChallenge

@@ -32,17 +32,18 @@ function App() {
     } else if (code && codeVerifier) {
       getATWithAuthCode(code, codeVerifier)
     }
+    // once on mount only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const justDoneAuthCodeRequest =
-    state && codeVerifier
-    && tokens?.accessToken && tokens?.refreshToken
+    state && codeVerifier && tokens?.accessToken && tokens?.refreshToken
   useEffect(() => {
     if (justDoneAuthCodeRequest) {
       deleteStateCookie(state)
       window.history.replaceState({}, document.title, '/')
     }
-  }, [justDoneAuthCodeRequest])
+  }, [justDoneAuthCodeRequest, state])
 
   const status = state && code && codeVerifier ? [
     `state: ${state}`,
