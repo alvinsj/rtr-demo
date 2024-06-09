@@ -1,23 +1,11 @@
-import { useCallback, useState } from 'react'
-import { createPKCECodes, redirectToLogin } from '@/utils/auth'
+import useInitPKCE from '@/hooks/useInitPKCE'
 
 const LoginButton = () => {
-  const [error, setError] = useState('')
-
-  const handleLogin = useCallback(async () => {
-    try {
-      const codes = await createPKCECodes()
-      redirectToLogin(codes.state, codes.codeChallenge)
-    } catch (error) {
-      if (error instanceof Error)
-        setError(error.message)
-      else setError('An unknown error occurred')
-    }
-  }, [])
+  const { error, onLogin } = useInitPKCE()
 
   return (
     <>
-      <button type="submit" onClick={handleLogin}>
+      <button type="submit" onClick={onLogin}>
         Login
       </button>
       <pre>
