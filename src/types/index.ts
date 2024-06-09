@@ -1,5 +1,9 @@
-export type PKCEState = {
+export type PKCEStatus = {
   isDone: boolean,
   codeVerifier?: string,
-  code?: string
+}
+
+export type AuthTokens = {
+  accessToken: string | null,
+  refreshToken: string | null
 }

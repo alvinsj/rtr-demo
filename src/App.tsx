@@ -1,90 +1,55 @@
-import { useEffect, useMemo, useState } from 'react'
-
-import { clearAllCookies } from '@lib/cookie'
+import { useState } from 'react'
 
 import { getPKCEStatus } from '@/utils/auth'
 import LoginButton from '@/components/LoginButton'
 import AuthContext from '@/contexts/AuthContext'
-import { postTokens } from '@/apis/postToken'
-import { setRefreshToken, getRefreshToken } from '@/utils/token'
+
+import useAuthContextValue from '@/hooks/useAuthContextValue'
+import useGetAccessTokenEffect from '@/hooks/useGetAccessTokenEffect'
 
 import s from './App.module.css'
-import { deleteStateCookie } from './utils/stateCookie'
+
 
 function App() {
   const params = new URLSearchParams(window.location.search)
   const state = params.get('state')
   const code = params.get('code')
 
-  const [accessToken, setAccessToken] = useState<string | null>(null)
-  const [isPKCEDone, setIsPKCEDone] = useState(false)
-  const [status, setStatus] = useState('')
 
-  useEffect(() => {
-    if (state) {
-      const { isDone, codeVerifier } = getPKCEStatus(state)
+  const { codeVerifier } = getPKCEStatus(state)
 
-      if (isDone && code) {
-        setIsPKCEDone(isDone)
-        setStatus(`state: ${state};code: ${code};\
-          codeVerifier: ${codeVerifier}`)
-        postTokens(code, codeVerifier!)
-          .then(res => {
-            const { access_token, refresh_token } = res
-            setAccessToken(access_token)
-            setRefreshToken(refresh_token)
-          })
-          .catch(err => {
-            setStatus(`Error: ${err?.message ?? 'App - An unknown error occurred'}`)
-          })
-          .finally(() => {
-            deleteStateCookie(state)
-            window.history.replaceState({}, document.title, '/')
-          })
-      }
-    }
-
-    // on mount only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const authContext = useMemo(() => {
-    return {
-      get accessToken(): string | null {
-        return accessToken ?? null
-      },
-      set accessToken(token: string) {
-        setAccessToken(token)
-      },
-      get refreshToken(): string | null {
-        return getRefreshToken()
-      },
-      set refresh_token(token: string) {
-        setRefreshToken(token)
-      }
-    }
-  }, [accessToken])
+  const { isLoading, error, tokens } = useGetAccessTokenEffect(
+    state, code, codeVerifier
+  )
+  const authContext = useAuthContextValue(tokens)
+  const status = state && code && codeVerifier ? [
+    `state: ${state}`,
+    `code: ${code}`,
+    `codeVerifier: ${codeVerifier}`
+  ] : []
 
   return (
     <AuthContext.Provider value={authContext}>
       <main className={s['app']}>
         <LoginButton className={s['app-loginBtn']} />
         <pre>
-          {isPKCEDone && <>
-            PKCE is done
+          {!isLoading && tokens && <>
             <table>
-              <tr>
-                <td className='debug-itemName'>accessToken</td>
-                <td className="debug-longText">{`${accessToken}`}</td>
-              </tr>
-              <tr>
-                <td className='debug-itemName'>refreshToken</td>
-                <td className="debug-longText">{`${getRefreshToken()}`}</td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td className='debug-itemName'>accessToken</td>
+                  <td className="debug-longText">{`${authContext.accessToken}`}</td>
+                </tr>
+                <tr>
+                  <td className='debug-itemName'>refreshToken</td>
+                  <td className="debug-longText">{`${authContext.refreshToken}`}</td>
+                </tr>
+              </tbody>
             </table>
           </>
           }
-          {status && status.split(';').map(s => <div>{s}</div>)}
+          {status && status.map(s => <div key={s}>{s}</div>)}
+          {error && <div className='debug-error'>{error}</div>}
         </pre>
       </main>
     </AuthContext.Provider>
