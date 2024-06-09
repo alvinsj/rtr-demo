@@ -4,8 +4,8 @@ import config from "@/config"
 
 describe("getPKCEStatus", () => {
   test("returns false on empty state", () => {
-    expect(getPKCEStatus()).toEqual({ isDone: false })
-    expect(getPKCEStatus('state')).toEqual({ isDone: false })
+    expect(getPKCEStatus()).toEqual({ isDone: false, codeVerifier: null, })
+    expect(getPKCEStatus('state')).toEqual({ isDone: false, codeVerifier: null, })
   })
 
   test("returns true on state and code", () => {
