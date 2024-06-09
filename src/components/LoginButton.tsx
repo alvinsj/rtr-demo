@@ -1,10 +1,13 @@
 import useInitPKCE from '@/hooks/useInitPKCE'
 
-const LoginButton = () => {
+type LoginButtonProps = {
+  className?: string
+}
+const LoginButton = ({ className }: LoginButtonProps) => {
   const { error, onLogin } = useInitPKCE()
 
   return (
-    <>
+    <div className={className}>
       <button type="submit" onClick={onLogin}>
         Login
       </button>
@@ -14,7 +17,7 @@ const LoginButton = () => {
       <pre>
         {document.cookie}
       </pre>
-    </>
+    </div>
   )
 }
 
