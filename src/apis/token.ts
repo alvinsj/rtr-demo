@@ -1,5 +1,5 @@
 import config from "@/config"
-import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt"
+import { PostTokenSchema } from "@/types"
 
 let abortController: AbortController | undefined
 export const postTokens = async (code: string, codeVerifier: string) => {
@@ -21,21 +21,21 @@ export const postTokens = async (code: string, codeVerifier: string) => {
     abortController = new AbortController()
 
     const response = await fetch(request, { signal: abortController.signal })
-    const res = await response.json()
-
-    if (!response.ok) {
-      throw new Error(res.error)
+    if (!response.ok || response.status >= 400 || response.status < 200) {
+      throw new Error(response.statusText)
     }
-    // FIXME for more error handling of different response
-    return res
+    const res = await response.json()
+    const tokenResponse = PostTokenSchema.parse(res)
 
+    // FIXME for more error handling of different response
+    return tokenResponse
   } catch (error) {
+
     if (typeof error === 'string' && error === 'Abort the previous request')
       return {}
 
-    throw new Error(
-      (error as Error)?.message
-      ?? 'postTokens - An unknown error occurred'
-    )
+    if (error instanceof Error) throw error
+
+    throw new Error('postTokens - An unknown error occurred')
   }
 }
