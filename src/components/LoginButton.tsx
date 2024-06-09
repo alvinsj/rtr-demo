@@ -8,15 +8,12 @@ const LoginButton = ({ className }: LoginButtonProps) => {
 
   return (
     <div className={className}>
-      <button type="submit" onClick={onLogin}>
-        Login
-      </button>
-      <pre>
-        {error}
-      </pre>
-      <pre>
-        {document.cookie}
-      </pre>
+      <span>{error}</span>
+      <span>
+        <button type="submit" onClick={onLogin}>
+          Login
+        </button>
+      </span>
     </div>
   )
 }

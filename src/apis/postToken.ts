@@ -1,6 +1,7 @@
 import config from "@/config"
+import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt"
 
-let abortController: AbortController = new AbortController()
+let abortController: AbortController | undefined
 export const postTokens = async (code: string, codeVerifier: string) => {
   const body = JSON.stringify({
     code,
@@ -15,7 +16,8 @@ export const postTokens = async (code: string, codeVerifier: string) => {
   })
 
   try {
-    abortController.abort()
+    if (abortController)
+      abortController.abort("Abort the previous request")
     abortController = new AbortController()
 
     const response = await fetch(request, { signal: abortController.signal })
@@ -28,10 +30,12 @@ export const postTokens = async (code: string, codeVerifier: string) => {
     return res
 
   } catch (error) {
+    if (typeof error === 'string' && error === 'Abort the previous request')
+      return {}
 
     throw new Error(
       (error as Error)?.message
-      ?? 'An unknown error occurred'
+      ?? 'postTokens - An unknown error occurred'
     )
   }
 }

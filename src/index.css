@@ -88,3 +88,15 @@ pre {
 .error {
   color: red;
 }
+
+.debug-longText {
+  max-width: 300px;
+  overflow: hidden;
+  word-break: break-all;
+  margin-bottom: 10px;
+}
+
+.debug-itemName {
+  font-weight: bold;
+  vertical-align: baseline;
+}

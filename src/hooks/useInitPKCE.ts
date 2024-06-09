@@ -11,7 +11,7 @@ const useInitPKCE = () => {
     } catch (error) {
       if (error instanceof Error)
         setError(error.message)
-      else setError('An unknown error occurred')
+      else setError('initPKCE - An unknown error occurred')
     }
   }, [])
 
