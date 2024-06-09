@@ -10,7 +10,10 @@ describe("useGetAccessToken", () => {
       getATWithRefreshToken: expect.any(Function),
       isLoading: false,
       error: null,
-      tokens: null
+      tokens: {
+        accessToken: null,
+        refreshToken: null,
+      }
     })
   })
 
