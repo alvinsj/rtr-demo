@@ -1,8 +1,10 @@
-import { describe, test, expect, beforeAll, afterAll, vi } from "vitest"
+import {
+  describe, test, expect, beforeAll, afterAll, afterEach, vi
+} from "vitest"
 import { getStateCookie, createStateCookie } from "../stateCookie"
 
 describe("createStateCookie", () => {
-  let mockCookie = []
+  let mockCookie: string[] = []
   beforeAll(() => {
     vi.stubGlobal('document', {
       get cookie() {
