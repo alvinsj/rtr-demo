@@ -58,13 +58,15 @@ function App() {
     code,
     codeVerifier,
   }
+  const isLoggedIn = authStage.stage === AuthStage.LOGGED_IN
+    || authStage.stage === AuthStage.AFTER_AUTH_CODE
 
   return (
     <AuthContext.Provider value={authContext}>
       <main className={s['app']}>
-        {authStage.stage === AuthStage.LOGGED_IN
-          ? <LogoutButton className={s['app-loginBtn']} />
-          : <LoginButton className={s['app-loginBtn']} />
+        {
+          isLoggedIn ? <LogoutButton className={s['app-loginBtn']} />
+            : <LoginButton className={s['app-loginBtn']} />
         }
         <h1>Stage: {authStage.stage}</h1>
         <pre>
@@ -81,7 +83,6 @@ function App() {
             </table>
           </>
           }
-          {status && status.map(s => <div key={s}>{s}</div>)}
           {error && <div className='debug-error'>{error}</div>}
         </pre>
       </main>

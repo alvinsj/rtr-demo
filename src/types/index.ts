@@ -19,9 +19,9 @@ export const PostTokenSchema = z.object({
 export type PostTokenResponse = z.infer<typeof PostTokenSchema>
 
 export enum AuthStage {
-  LOGGED_OUT = 'LOGGED_OUT',
-  BEFORE_REFRESH_TOKEN = 'BEFORE_REFRESH_TOKEN',
-  BEFORE_AUTH_CODE = 'BEFORE_AUTH_CODE',
-  AFTER_AUTH_CODE = 'AFTER_AUTH_CODE',
-  LOGGED_IN = 'LOGGED_IN'
+  LOGGED_OUT = 'Logged Out',
+  BEFORE_REFRESH_TOKEN = 'Before getting token with Refresh Token',
+  BEFORE_AUTH_CODE = 'Before getting token with Auth Code',
+  AFTER_AUTH_CODE = 'Logged in with Auth Code',
+  LOGGED_IN = 'Logged In'
 }
