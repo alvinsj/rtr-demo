@@ -1,7 +1,28 @@
-import { describe, test, expect } from "vitest"
+import { describe, test, expect, beforeAll, afterAll, vi } from "vitest"
 import { getStateCookie, createStateCookie } from "../stateCookie"
 
 describe("createStateCookie", () => {
+  let mockCookie = []
+  beforeAll(() => {
+    vi.stubGlobal('document', {
+      get cookie() {
+        return mockCookie.join(';')
+      },
+      set cookie(value) {
+        mockCookie = mockCookie.filter(c => !c.startsWith(value.split('=')[0]))
+        mockCookie.push(value)
+      },
+    })
+  })
+
+  afterEach(() => {
+    mockCookie = []
+  })
+
+  afterAll(() => {
+    vi.unstubAllGlobals()
+  })
+
   test("throws errors on empty string", () => {
     expect(() => createStateCookie(""))
       .toThrow("state value is required")
