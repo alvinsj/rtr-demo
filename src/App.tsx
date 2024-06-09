@@ -27,7 +27,7 @@ function App() {
       deleteStateCookie(state)
       window.history.replaceState({}, document.title, '/')
     }
-  }, [tokens])
+  }, [tokens, codeVerifier, state])
 
   const status = state && code && codeVerifier ? [
     `state: ${state}`,
