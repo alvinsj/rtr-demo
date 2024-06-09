@@ -17,3 +17,11 @@ export const PostTokenSchema = z.object({
 })
 
 export type PostTokenResponse = z.infer<typeof PostTokenSchema>
+
+export enum AuthStage {
+  LOGGED_OUT = 'LOGGED_OUT',
+  BEFORE_REFRESH_TOKEN = 'BEFORE_REFRESH_TOKEN',
+  BEFORE_AUTH_CODE = 'BEFORE_AUTH_CODE',
+  AFTER_AUTH_CODE = 'AFTER_AUTH_CODE',
+  LOGGED_IN = 'LOGGED_IN'
+}
