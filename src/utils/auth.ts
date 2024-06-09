@@ -32,11 +32,11 @@ export const redirectToLogin = async (
 export const getPKCEStatus = (state?: string | null): PKCEStatus => {
   // guard: pkce is not initialized yet
   if (!state) {
-    return { isDone: false }
+    return { isDone: false, codeVerifier: null }
   }
 
   const codeVerifier = getStateCookie(state)
-  if (!codeVerifier) return { isDone: false }
+  if (!codeVerifier) return { isDone: false, codeVerifier: null }
 
   return {
     isDone: true,

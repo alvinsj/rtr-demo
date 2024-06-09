@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export type PKCEStatus = {
   isDone: boolean,
-  codeVerifier?: string,
+  codeVerifier: string | null,
 }
 
 export type AuthTokens = {
