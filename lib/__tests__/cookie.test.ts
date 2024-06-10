@@ -86,11 +86,13 @@ describe('cookie', () => {
 
   describe('clearAllCookies', () => {
     test('clears all cookies', () => {
-      saveCookie('a', '12345')
-      saveCookie('b', '54321')
-      clearAllCookies()
-      expect(document.cookie).toMatch('a=;')
-      expect(document.cookie).toMatch('b=;')
+      saveCookie('state-a', '12345')
+      saveCookie('state-b', '54321')
+      saveCookie('c', '54321')
+      clearAllCookies("state-")
+      expect(document.cookie).toMatch('state-a=;')
+      expect(document.cookie).toMatch('state-b=;')
+      expect(document.cookie).toMatch('c=54321;')
     })
   })
 })
