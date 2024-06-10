@@ -4,21 +4,24 @@ import { useContextSelector } from 'use-context-selector'
 import useInitPKCE from '@/hooks/useInitPKCE'
 import AuthContext from '@/contexts/AuthContext'
 import { deleteRefreshToken } from '@/utils/refreshToken'
-import { reload } from '@/utils/route'
 
 type LoginButtonProps = {
   className?: string
 }
 const LoginButton = ({ className }: LoginButtonProps) => {
-  const accessToken = useContextSelector(AuthContext, ctx => ctx.accessToken)
-
+  const accessToken = useContextSelector(
+    AuthContext, ctx => ctx.accessToken
+  )
+  const setAccessToken = useContextSelector(
+    AuthContext, ctx => ctx.setAccessToken
+  )
   const [isLoading, setIsLoading] = useState(false)
 
   const { error, onLogin } = useInitPKCE()
   const handleLogout = useCallback(() => {
     deleteRefreshToken()
-    reload()
-  }, [])
+    setAccessToken(null)
+  }, [setAccessToken])
 
   useEffect(() => {
     const handleRouteChangeStart = () => setIsLoading(true)
@@ -27,14 +30,16 @@ const LoginButton = ({ className }: LoginButtonProps) => {
   }, [])
 
   const isLoggedIn = !!accessToken
+  const buttonText = isLoggedIn ? 'Logout' : 'Login'
+  const handleButtonClick = isLoggedIn ? handleLogout : onLogin
 
   return (
     <div className={className}>
       <span className='error'>{error}</span>
       <button type="submit"
-        onClick={isLoggedIn ? handleLogout : onLogin}
+        onClick={handleButtonClick}
         disabled={isLoading}>
-        {isLoading ? 'Loading...' : (isLoggedIn ? 'Logout' : 'Login')}
+        {isLoading ? 'Loading...' : buttonText}
       </button>
     </div>
   )
