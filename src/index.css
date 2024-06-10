@@ -24,10 +24,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 1rem;
 }
 
 h1 {
@@ -67,35 +64,7 @@ button:focus-visible {
   }
 }
 
-#root {
-  height: 100vh;
-  padding: 15px;
-}
-
-pre {
-  max-width: 80vw;
-  text-align: left;
-  overflow: hidden;
-  white-space: wrap;
-  word-wrap: normal;
-  font-size: 0.9em;
-  line-height: 1.5;
-  border-radius: 8px;
-}
-
 .error {
   color: red;
-}
-
-.debug-longText {
-  max-width: 80vw;
-  overflow: hidden;
-  word-break: break-all;
-  margin-bottom: 10px;
-}
-
-.debug-itemName {
-  font-weight: bold;
-  vertical-align: baseline;
-  padding-right: 15px;
+  margin: 0 1rem;
 }

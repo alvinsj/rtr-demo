@@ -1,8 +1,31 @@
-.app {
-}
-
 .app-loginBtn {
   position: absolute;
   top: 1rem;
   right: 1rem;
+}
+
+.debug-table {
+  width: 80vw;
+  text-align: left;
+
+  font-family: monospace;
+  line-height: 1.5;
+}
+.debug-table tr:nth-of-type(odd) {
+  background-color: green;
+}
+.debug-table td {
+  padding: 1rem;
+}
+
+.debug-itemName {
+  font-weight: bold;
+  vertical-align: baseline;
+  padding-right: 1rem;
+  width: 20%;
+}
+.debug-itemValue {
+  vertical-align: baseline;
+  word-break: break-all;
+  width: 80%;
 }

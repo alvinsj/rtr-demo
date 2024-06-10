@@ -39,7 +39,7 @@ function App() {
     } else if (authStage.stage === AuthStage.BEFORE_AUTH_CODE) {
       getATWithAuthCode(authStage.state, authStage.code, authStage.codeVerifier)
     }
-    // once on mount only
+    // on stage change only
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authStage.stage])
 
@@ -49,6 +49,8 @@ function App() {
     state,
     code,
     codeVerifier,
+    cookie: document.cookie || null,
+    localStorage: JSON.stringify(localStorage, null, 2)
   }
   const isLoggedIn = authStage.stage === AuthStage.LOGGED_IN
     || authStage.stage === AuthStage.AFTER_AUTH_CODE
@@ -61,22 +63,19 @@ function App() {
             : <LoginButton className={s['app-loginBtn']} />
         }
         <h1>Stage: {authStage.stage}</h1>
-        <pre>
-          {!isLoading && <>
-            <table>
-              <tbody>
-                {Object.entries(statuses).filter(([, v]) => !!v).map(([key, value]) => (
-                  <tr key={key}>
-                    <td className='debug-itemName'>{key}</td>
-                    <td className="debug-longText">{`${value}`}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-          }
-          {error && <div className='debug-error'>{error}</div>}
-        </pre>
+        {error && <div className="error">{error}</div>}
+        {!isLoading && <>
+          <table className={s['debug-table']}>
+            <tbody>
+              {Object.entries(statuses).map(([key, value]) => (
+                <tr key={key}>
+                  <td className={s['debug-itemName']}>{key}</td>
+                  <td className={s['debug-itemValue']}>{`${value ?? "<empty>"}`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>}
       </main>
     </AuthContext.Provider>
   )
