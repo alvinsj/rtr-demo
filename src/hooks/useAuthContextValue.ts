@@ -22,7 +22,7 @@ const useAuthContextValue = (tokens: AuthTokens) => {
       get refreshToken(): string | null {
         return getRefreshToken()
       },
-      setAccessToken(token: string) {
+      setAccessToken(token: string | null) {
         setAccessToken(token)
       },
       setRefreshToken(token: string) {
