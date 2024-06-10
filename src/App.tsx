@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import AuthContext from '@/contexts/AuthContext'
 import { getPKCEStatus } from '@/utils/auth'
+import { getAuthStage } from '@/utils/authStage'
 import { clearSearchParams, getSearchParams } from '@/utils/route'
 import { deleteStateCookie } from '@/utils/stateCookie'
 import { AuthStage } from '@/types'
@@ -12,7 +13,6 @@ import useAuthContextValue from '@/hooks/useAuthContextValue'
 import useGetAccessToken from '@/hooks/useGetAccessToken'
 
 import s from './App.module.css'
-import { getAuthStage } from './utils/authStage'
 
 function App() {
   const { state, code } = getSearchParams()
@@ -51,8 +51,6 @@ function App() {
     cookie: document.cookie || null,
     localStorage: JSON.stringify(localStorage, null, 2)
   }
-  const isLoggedIn = authStage.stage === AuthStage.LOGGED_IN
-    || authStage.stage === AuthStage.AFTER_AUTH_CODE
 
   return (
     <AuthContext.Provider value={authContext}>
