@@ -3,7 +3,7 @@ import { createContext } from "use-context-selector"
 export type AuthContextType = {
   readonly accessToken: string | null;
   readonly refreshToken: string | null;
-  setAccessToken(token: string): void;
+  setAccessToken(token: string | null): void;
   setRefreshToken(token: string): void;
 }
 

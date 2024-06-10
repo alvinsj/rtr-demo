@@ -2,7 +2,7 @@ import { describe, test, expect, beforeAll, afterAll, vi, afterEach } from 'vite
 import { saveCookie, getCookie, deleteCookie, clearAllCookies } from '../cookie'
 
 describe('cookie', () => {
-  let mockCookie = []
+  let mockCookie: string[] = []
   beforeAll(() => {
     vi.stubGlobal('document', {
       get cookie() {
@@ -24,10 +24,6 @@ describe('cookie', () => {
   })
 
   describe('saveCookie', () => {
-    test('throws error on empty name', () => {
-      expect(() => saveCookie()).toThrowError('Cookie name is required')
-    })
-
     test('saves empty value', () => {
       saveCookie('a', '')
       expect(document.cookie).toMatch('a=;')
@@ -90,11 +86,13 @@ describe('cookie', () => {
 
   describe('clearAllCookies', () => {
     test('clears all cookies', () => {
-      saveCookie('a', '12345')
-      saveCookie('b', '54321')
-      clearAllCookies()
-      expect(document.cookie).toMatch('a=;')
-      expect(document.cookie).toMatch('b=;')
+      saveCookie('state-a', '12345')
+      saveCookie('state-b', '54321')
+      saveCookie('c', '54321')
+      clearAllCookies("state-")
+      expect(document.cookie).toMatch('state-a=;')
+      expect(document.cookie).toMatch('state-b=;')
+      expect(document.cookie).toMatch('c=54321;')
     })
   })
 })

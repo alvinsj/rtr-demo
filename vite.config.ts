@@ -11,12 +11,17 @@ export default defineConfig({
     ]
   },
   test: {
+    css: {
+      modules: {
+        classNameStrategy: 'non-scoped'
+      }
+    },
     globals: true,
-    environment: 'happy-dom',
-    // browser: {
-    //   enabled: true,
-    //   name: 'chrome',
-    //   headless: true
-    // }
+    environment: 'happy-dom'
+  },
+  browser: {
+    enabled: true,
+    name: 'chrome',
+    headless: true
   }
 })

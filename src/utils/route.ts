@@ -14,5 +14,3 @@ export const getSearchParams = () => {
 export const redirect = (url: string) => {
   window.location.replace(url)
 }
-
-export const reload = () => window.location.reload()

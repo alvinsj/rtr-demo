@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import AuthContext from '@/contexts/AuthContext'
 import { getPKCEStatus } from '@/utils/auth'
+import { getAuthStage } from '@/utils/authStage'
 import { clearSearchParams, getSearchParams } from '@/utils/route'
 import { deleteStateCookie } from '@/utils/stateCookie'
 import { AuthStage } from '@/types'
@@ -12,8 +13,6 @@ import useAuthContextValue from '@/hooks/useAuthContextValue'
 import useGetAccessToken from '@/hooks/useGetAccessToken'
 
 import s from './App.module.css'
-import LogoutButton from './components/LogoutButton'
-import { getAuthStage } from './utils/authStage'
 
 function App() {
   const { state, code } = getSearchParams()
@@ -39,7 +38,7 @@ function App() {
     } else if (authStage.stage === AuthStage.BEFORE_AUTH_CODE) {
       getATWithAuthCode(authStage.state, authStage.code, authStage.codeVerifier)
     }
-    // once on mount only
+    // on stage change only
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authStage.stage])
 
@@ -49,34 +48,28 @@ function App() {
     state,
     code,
     codeVerifier,
+    cookie: document.cookie || null,
+    localStorage: JSON.stringify(localStorage, null, 2)
   }
-  const isLoggedIn = authStage.stage === AuthStage.LOGGED_IN
-    || authStage.stage === AuthStage.AFTER_AUTH_CODE
 
   return (
     <AuthContext.Provider value={authContext}>
       <main className={s['app']}>
-        {
-          isLoggedIn ? <LogoutButton className={s['app-loginBtn']} />
-            : <LoginButton className={s['app-loginBtn']} />
-        }
-        <h1>Stage: {authStage.stage}</h1>
-        <pre>
-          {!isLoading && <>
-            <table>
-              <tbody>
-                {Object.entries(statuses).filter(([, v]) => !!v).map(([key, value]) => (
-                  <tr key={key}>
-                    <td className='debug-itemName'>{key}</td>
-                    <td className="debug-longText">{`${value}`}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-          }
-          {error && <div className='debug-error'>{error}</div>}
-        </pre>
+        <LoginButton className={s['app-loginBtn']} />
+        <h1>{authStage.stage}</h1>
+        {error && <div className="error">{error}</div>}
+        {!isLoading && (
+          <table className={s['debug-table']}>
+            <tbody>
+              {Object.entries(statuses).map(([key, value]) => (
+                <tr key={key}>
+                  <td className={s['debug-itemName']}>{key}</td>
+                  <td className={s['debug-itemValue']}>{`${value ?? "<empty>"}`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>)}
+        {isLoading && <p>Loading...</p>}
       </main>
     </AuthContext.Provider>
   )
