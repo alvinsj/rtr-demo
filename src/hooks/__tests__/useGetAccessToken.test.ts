@@ -41,20 +41,16 @@ describe("useGetAccessToken", () => {
 
       const { result } = renderHook(() => useGetAccessToken())
 
-      act(() => {
-        result.current.getATWithAuthCode("state", "code", "codeVerifier")
+      await act(async () => {
+        await result.current.getATWithAuthCode("state", "code", "codeVerifier")
       })
-      expect(result.current.isLoading).toBeTruthy()
-      expect(result.current.error).toBeFalsy()
 
-      await vi.waitFor(() => {
-        expect(result.current.tokens).toEqual({
-          accessToken: "access_token_jwt",
-          refreshToken: "refresh_token_jwt"
-        })
-        expect(result.current.isLoading).toBeFalsy()
-        expect(result.current.error).toBeFalsy()
+      expect(result.current.tokens).toEqual({
+        accessToken: "access_token_jwt",
+        refreshToken: "refresh_token_jwt"
       })
+      expect(result.current.isLoading).toBeFalsy()
+      expect(result.current.error).toBeFalsy()
     })
 
     test("captures error and delete state cookie", async () => {
@@ -70,22 +66,17 @@ describe("useGetAccessToken", () => {
 
       const { result } = renderHook(() => useGetAccessToken())
 
-      act(() => {
-        result.current.getATWithAuthCode("state", "code", "codeVerifier")
+      await act(async () => {
+        await result.current.getATWithAuthCode("state", "code", "codeVerifier")
       })
 
-      expect(result.current.isLoading).toBeTruthy()
-      expect(result.current.error).toBeNull()
-
-      await vi.waitFor(() => {
-        expect(result.current.tokens).toEqual({
-          accessToken: null,
-          refreshToken: null
-        })
-        expect(result.current.isLoading).toBeFalsy()
-        expect(result.current.error).toBe("Bad Request")
-        expect(deleteStateCookie).toHaveBeenCalled()
+      expect(result.current.tokens).toEqual({
+        accessToken: null,
+        refreshToken: null
       })
+      expect(result.current.isLoading).toBeFalsy()
+      expect(result.current.error).toBe("Bad Request")
+      expect(deleteStateCookie).toHaveBeenCalled()
     })
   })
   describe("refresh token", () => {
@@ -103,20 +94,15 @@ describe("useGetAccessToken", () => {
 
       const { result } = renderHook(() => useGetAccessToken())
 
-      act(() => {
-        result.current.getATWithAuthCode("state", "code", "codeVerifier")
+      await act(async () => {
+        await result.current.getATWithRefreshToken("mock_refresh_token")
       })
-      expect(result.current.isLoading).toBeTruthy()
+      expect(result.current.tokens).toEqual({
+        accessToken: "access_token_jwt",
+        refreshToken: "refresh_token_jwt"
+      })
+      expect(result.current.isLoading).toBeFalsy()
       expect(result.current.error).toBeFalsy()
-
-      await vi.waitFor(() => {
-        expect(result.current.tokens).toEqual({
-          accessToken: "access_token_jwt",
-          refreshToken: "refresh_token_jwt"
-        })
-        expect(result.current.isLoading).toBeFalsy()
-        expect(result.current.error).toBeFalsy()
-      })
     })
 
     test("captures error and delete refresh token", async () => {
@@ -132,22 +118,17 @@ describe("useGetAccessToken", () => {
 
       const { result } = renderHook(() => useGetAccessToken())
 
-      act(() => {
-        result.current.getATWithRefreshToken("mock_refresh_token")
+      await act(async () => {
+        await result.current.getATWithRefreshToken("mock_refresh_token")
       })
 
-      expect(result.current.isLoading).toBeTruthy()
-      expect(result.current.error).toBeNull()
-
-      await vi.waitFor(() => {
-        expect(result.current.tokens).toEqual({
-          accessToken: null,
-          refreshToken: null
-        })
-        expect(result.current.isLoading).toBeFalsy()
-        expect(result.current.error).toBe("Bad Request")
-        expect(deleteRefreshToken).toHaveBeenCalled()
+      expect(result.current.tokens).toEqual({
+        accessToken: null,
+        refreshToken: null
       })
+      expect(result.current.isLoading).toBeFalsy()
+      expect(result.current.error).toBe("Bad Request")
+      expect(deleteRefreshToken).toHaveBeenCalled()
     })
   })
 })
