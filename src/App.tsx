@@ -62,9 +62,9 @@ function App() {
           isLoggedIn ? <LogoutButton className={s['app-loginBtn']} />
             : <LoginButton className={s['app-loginBtn']} />
         }
-        <h1>Stage: {authStage.stage}</h1>
+        <h1>{authStage.stage}</h1>
         {error && <div className="error">{error}</div>}
-        {!isLoading && <>
+        {!isLoading && (
           <table className={s['debug-table']}>
             <tbody>
               {Object.entries(statuses).map(([key, value]) => (
@@ -74,8 +74,8 @@ function App() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </>}
+          </table>)}
+        {isLoading && <p>Loading...</p>}
       </main>
     </AuthContext.Provider>
   )
