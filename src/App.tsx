@@ -12,7 +12,6 @@ import useAuthContextValue from '@/hooks/useAuthContextValue'
 import useGetAccessToken from '@/hooks/useGetAccessToken'
 
 import s from './App.module.css'
-import LogoutButton from './components/LogoutButton'
 import { getAuthStage } from './utils/authStage'
 
 function App() {
@@ -58,10 +57,7 @@ function App() {
   return (
     <AuthContext.Provider value={authContext}>
       <main className={s['app']}>
-        {
-          isLoggedIn ? <LogoutButton className={s['app-loginBtn']} />
-            : <LoginButton className={s['app-loginBtn']} />
-        }
+        <LoginButton className={s['app-loginBtn']} />
         <h1>{authStage.stage}</h1>
         {error && <div className="error">{error}</div>}
         {!isLoading && (
