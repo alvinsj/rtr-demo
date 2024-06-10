@@ -1,7 +1,7 @@
-import { deleteRefreshToken } from "@/utils/refreshToken"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { reload } from '@/utils/route'
+import { deleteRefreshToken } from "@/utils/refreshToken"
 
 type LogoutButtonProps = {
   className?: string
@@ -12,11 +12,19 @@ const LogoutButton = ({ className }: LogoutButtonProps) => {
     reload()
   }, [])
 
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => setIsLoading(true)
+    window.addEventListener('beforeunload', handleRouteChangeStart)
+    return () => window.removeEventListener('beforeunload', handleRouteChangeStart)
+  }, [])
+
   return (
     <div className={className}>
       <span>
-        <button type="submit" onClick={handleLogout}>
-          Logout
+        <button type="submit" onClick={handleLogout} disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Logout'}
         </button>
       </span>
     </div>
