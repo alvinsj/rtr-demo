@@ -12,7 +12,11 @@
   line-height: 1.5;
 }
 .debug-table tr:nth-of-type(odd) {
-  background-color: green;
+  background-color: lightgreen;
+
+  @media screen and (prefers-color-scheme: dark) {
+    background-color: green;
+  }
 }
 .debug-table td {
   padding: 1rem;
