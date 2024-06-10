@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 import { postTokenWithAuthCode, postTokenWithRefreshToken } from '@/apis/token'
 import { AuthTokens, PostTokenResponse } from '@/types'
-import { deleteRefreshToken } from '@/utils/token'
+import { deleteRefreshToken } from '@/utils/refreshToken'
 import { deleteStateCookie } from '@/utils/stateCookie'
 
 const useGetAccessToken = () => {
