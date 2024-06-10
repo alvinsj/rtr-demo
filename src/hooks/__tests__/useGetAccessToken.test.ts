@@ -26,7 +26,7 @@ describe("useGetAccessToken", () => {
   })
 
 
-  describe("auth token", () => {
+  describe("getATWithAuthCode", () => {
     test("returns access tokens", async () => {
       const mockResponse = {
         access_token: 'access_token_jwt',
@@ -79,7 +79,7 @@ describe("useGetAccessToken", () => {
       expect(deleteStateCookie).toHaveBeenCalled()
     })
   })
-  describe("refresh token", () => {
+  describe("getATWithRefreshToken", () => {
     test("returns access tokens", async () => {
       const mockResponse = {
         access_token: 'access_token_jwt',
