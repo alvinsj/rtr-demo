@@ -3,6 +3,9 @@ import {
   createStateCookie
 } from "@/utils/stateCookie"
 import {
+  redirect
+} from "@/utils/route"
+import {
   createPKCECodeChallenge,
   createRandomString
 } from "@lib/pkce"
@@ -26,17 +29,17 @@ export const redirectToLogin = async (
   query.append('state', state)
   query.append('code_challenge', codeChallenge)
 
-  window.location.replace(`${config.LOGIN_URL}?${query.toString()}`)
+  redirect(`${config.LOGIN_URL}?${query.toString()}`)
 }
 
 export const getPKCEStatus = (state?: string | null): PKCEStatus => {
   // guard: pkce is not initialized yet
   if (!state) {
-    return { isDone: false }
+    return { isDone: false, codeVerifier: null }
   }
 
   const codeVerifier = getStateCookie(state)
-  if (!codeVerifier) return { isDone: false }
+  if (!codeVerifier) return { isDone: false, codeVerifier: null }
 
   return {
     isDone: true,

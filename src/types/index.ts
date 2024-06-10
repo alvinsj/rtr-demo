@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export type PKCEStatus = {
   isDone: boolean,
-  codeVerifier?: string,
+  codeVerifier: string | null,
 }
 
 export type AuthTokens = {
@@ -17,3 +17,11 @@ export const PostTokenSchema = z.object({
 })
 
 export type PostTokenResponse = z.infer<typeof PostTokenSchema>
+
+export enum AuthStage {
+  LOGGED_OUT = 'Logged Out',
+  BEFORE_REFRESH_TOKEN = 'Before getting token with Refresh Token',
+  BEFORE_AUTH_CODE = 'Before getting token with Auth Code',
+  AFTER_AUTH_CODE = 'Logged in with Auth Code',
+  LOGGED_IN = 'Logged In'
+}

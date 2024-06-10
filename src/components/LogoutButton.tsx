@@ -1,5 +1,7 @@
-import { deleteRefreshToken } from "@/utils/token"
+import { deleteRefreshToken } from "@/utils/refreshToken"
 import { useCallback } from "react"
+
+import { reload } from '@/utils/route'
 
 type LogoutButtonProps = {
   className?: string
@@ -7,7 +9,7 @@ type LogoutButtonProps = {
 const LogoutButton = ({ className }: LogoutButtonProps) => {
   const handleLogout = useCallback(() => {
     deleteRefreshToken()
-    window.location.reload()
+    reload()
   }, [])
 
   return (

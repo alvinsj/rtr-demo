@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from 'react'
 
-import { getRefreshToken, setRefreshToken } from '@/utils/token'
+import { getRefreshToken, setRefreshToken } from '@/utils/refreshToken'
 import { AuthTokens } from '@/types'
 
 const useAuthContextValue = (tokens: AuthTokens) => {
+  // access token in memory
   const [accessToken, setAccessToken] = useState<string | null>(null)
 
   useEffect(() => {

@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 
-import { getPKCEStatus } from '@/utils/auth'
-import { deleteStateCookie } from '@/utils/stateCookie'
 import AuthContext from '@/contexts/AuthContext'
+import { getPKCEStatus } from '@/utils/auth'
+import { clearSearchParams, getSearchParams } from '@/utils/route'
+import { deleteStateCookie } from '@/utils/stateCookie'
+import { AuthStage } from '@/types'
 
 import LoginButton from '@/components/LoginButton'
 
@@ -11,72 +13,68 @@ import useGetAccessToken from '@/hooks/useGetAccessToken'
 
 import s from './App.module.css'
 import LogoutButton from './components/LogoutButton'
+import { getAuthStage } from './utils/authStage'
 
 function App() {
-  const params = new URLSearchParams(window.location.search)
-  const state = params.get('state')
-  const code = params.get('code')
-
-
+  const { state, code } = getSearchParams()
   const { codeVerifier } = getPKCEStatus(state)
-
   const {
     isLoading, error, tokens,
     getATWithAuthCode, getATWithRefreshToken
   } = useGetAccessToken()
   const authContext = useAuthContextValue(tokens)
 
+  const authStage = getAuthStage({
+    state, code, codeVerifier,
+    accessToken: authContext.accessToken,
+    refreshToken: authContext.refreshToken,
+  })
+
   useEffect(() => {
-    if (authContext.refreshToken && !authContext.accessToken) {
-      getATWithRefreshToken(authContext.refreshToken)
-    } else if (code && codeVerifier) {
-      getATWithAuthCode(code, codeVerifier)
+    if (authStage.stage === AuthStage.AFTER_AUTH_CODE) {
+      deleteStateCookie(authStage.state)
+      clearSearchParams()
+    } else if (authStage.stage === AuthStage.BEFORE_REFRESH_TOKEN) {
+      getATWithRefreshToken(authStage.refreshToken)
+    } else if (authStage.stage === AuthStage.BEFORE_AUTH_CODE) {
+      getATWithAuthCode(authStage.state, authStage.code, authStage.codeVerifier)
     }
     // once on mount only
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [authStage.stage])
 
-  const justDoneAuthCodeRequest =
-    state && codeVerifier && tokens?.accessToken && tokens?.refreshToken
-  useEffect(() => {
-    if (justDoneAuthCodeRequest) {
-      deleteStateCookie(state)
-      window.history.replaceState({}, document.title, '/')
-    }
-  }, [justDoneAuthCodeRequest, state])
-
-  const status = state && code && codeVerifier ? [
-    `state: ${state}`,
-    `code: ${code}`,
-    `codeVerifier: ${codeVerifier}`
-  ] : []
-
-  const isLoggedIn = !!authContext.accessToken
+  const statuses = {
+    accessToken: authContext.accessToken,
+    refreshToken: authContext.refreshToken,
+    state,
+    code,
+    codeVerifier,
+  }
+  const isLoggedIn = authStage.stage === AuthStage.LOGGED_IN
+    || authStage.stage === AuthStage.AFTER_AUTH_CODE
 
   return (
     <AuthContext.Provider value={authContext}>
       <main className={s['app']}>
-        {isLoggedIn
-          ? <LogoutButton className={s['app-loginBtn']} />
-          : <LoginButton className={s['app-loginBtn']} />
+        {
+          isLoggedIn ? <LogoutButton className={s['app-loginBtn']} />
+            : <LoginButton className={s['app-loginBtn']} />
         }
+        <h1>Stage: {authStage.stage}</h1>
         <pre>
           {!isLoading && <>
             <table>
               <tbody>
-                <tr>
-                  <td className='debug-itemName'>accessToken</td>
-                  <td className="debug-longText">{`${authContext.accessToken}`}</td>
-                </tr>
-                <tr>
-                  <td className='debug-itemName'>refreshToken</td>
-                  <td className="debug-longText">{`${authContext.refreshToken}`}</td>
-                </tr>
+                {Object.entries(statuses).filter(([, v]) => !!v).map(([key, value]) => (
+                  <tr key={key}>
+                    <td className='debug-itemName'>{key}</td>
+                    <td className="debug-longText">{`${value}`}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </>
           }
-          {status && status.map(s => <div key={s}>{s}</div>)}
           {error && <div className='debug-error'>{error}</div>}
         </pre>
       </main>

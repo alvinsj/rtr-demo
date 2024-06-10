@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react'
 
 import { postTokenWithAuthCode, postTokenWithRefreshToken } from '@/apis/token'
 import { AuthTokens, PostTokenResponse } from '@/types'
+import { deleteRefreshToken } from '@/utils/refreshToken'
+import { deleteStateCookie } from '@/utils/stateCookie'
 
 const useGetAccessToken = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -12,6 +14,7 @@ const useGetAccessToken = () => {
   const [error, setError] = useState<string | null>(null)
 
   const getATWithAuthCode = useCallback(async (
+    state: string,
     code: string,
     codeVerifier: string
   ) => {
@@ -24,12 +27,13 @@ const useGetAccessToken = () => {
           refreshToken: res.refresh_token
         })
       })
-      .catch((err) =>
+      .catch((err) => {
+        deleteStateCookie(state)
         setError(
           err?.message
           ?? 'getATWithAuthCode - An unknown error occurred'
         )
-      )
+      })
       .finally(() => {
         setIsLoading(false)
       })
@@ -46,12 +50,13 @@ const useGetAccessToken = () => {
           refreshToken: res.refresh_token
         })
       })
-      .catch((err) =>
+      .catch((err) => {
+        deleteRefreshToken()
         setError(
           err?.message
           ?? 'getATWithRefreshToken - An unknown error occurred'
         )
-      )
+      })
       .finally(() => {
         setIsLoading(false)
       })

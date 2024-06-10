@@ -23,7 +23,7 @@ describe("useAuthContextValue", () => {
       refreshToken: "refreshToken"
     }))
 
-    vi.waitFor(() => {
+    await vi.waitFor(() => {
       expect(result.current.accessToken).toBe("accessToken")
       expect(result.current.refreshToken).toBe("refreshToken")
     })
