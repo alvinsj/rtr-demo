@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import AuthContext from '@/contexts/AuthContext'
 import { getPKCEStatus } from '@/utils/auth'
+import { clearSearchParams, getSearchParams } from '@/utils/route'
 import { deleteStateCookie } from '@/utils/stateCookie'
 import { AuthStage } from '@/types'
 
@@ -14,22 +15,13 @@ import s from './App.module.css'
 import LogoutButton from './components/LogoutButton'
 import { getAuthStage } from './utils/authStage'
 
-function clearSearchParams() {
-  const url = new URL(window.location.href) // Create a URL object from the current window location
-  url.search = '' // Clear the search parameters
-  window.history.replaceState({}, document.title, url.toString()) // Update the URL without reloading the page
-}
-
 function App() {
-  const params = new URLSearchParams(window.location.search)
-  const state = params.get('state')
-  const code = params.get('code')
+  const { state, code } = getSearchParams()
   const { codeVerifier } = getPKCEStatus(state)
   const {
     isLoading, error, tokens,
     getATWithAuthCode, getATWithRefreshToken
   } = useGetAccessToken()
-
   const authContext = useAuthContextValue(tokens)
 
   const authStage = getAuthStage({
