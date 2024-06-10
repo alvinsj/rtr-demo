@@ -20,16 +20,14 @@ export const getAuthStage = ({
   accessToken, refreshToken,
 }: GetAuthStageProps): AuthStageResult => {
 
-  if (state && code && codeVerifier && accessToken)
+  if (state && code && codeVerifier && accessToken && refreshToken)
     return { stage: AuthStage.AFTER_AUTH_CODE, state }
-  if (accessToken)
+  if (accessToken && refreshToken)
     return { stage: AuthStage.LOGGED_IN, accessToken }
   if (!accessToken && refreshToken)
     return { stage: AuthStage.BEFORE_REFRESH_TOKEN, refreshToken }
   if (state && code && codeVerifier && !accessToken && !refreshToken)
     return { stage: AuthStage.BEFORE_AUTH_CODE, state, code, codeVerifier }
 
-  console.log('getAuthStage', state, code, codeVerifier,
-    accessToken, refreshToken,)
   return { stage: AuthStage.LOGGED_OUT }
 }
