@@ -15,4 +15,4 @@ export const redirect = (url: string) => {
   window.location.replace(url)
 }
 
-export const relaod = () => window.location.reload()
+export const reload = () => window.location.reload()
